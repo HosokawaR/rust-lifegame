@@ -78,31 +78,35 @@ fn advance_world(world: &mut World, width: &usize, height: &usize) {
 }
 
 fn display_world(world: &World, generation: u32, width: &usize, height: &usize) {
-    println!("generation: {}", generation);
+    let mut buf = "generation: ".to_string();
+
+    buf += &generation.to_string();
+    buf += "\n";
+
     for row in 0..*height {
         for col in 0..*width {
-            print!(
-                "{} ",
-                if world[row][col] > 0 {
-                    "\x1b[32m■\x1b[0m"
-                } else {
-                    "\x1b[30m□\x1b[0m"
-                }
-            );
+            buf += if world[row][col] > 0 {
+                "\x1b[32m■\x1b[0m"
+            } else {
+                "\x1b[30m□\x1b[0m"
+            };
+            buf += " ";
         }
-        println!("")
+        buf += "\n";
     }
+
+    println!("{}", buf);
 }
 
 fn clear(height: &usize) {
-    print!("\x1b[{}A", height + 1);
+    print!("\x1b[{}A", height + 2);
     print!("\x1b[0J");
 }
 
 fn main() {
     let termsize::Size { rows, cols } = termsize::get().unwrap();
     let width = cols as usize / 2;
-    let height = rows as usize - 2;
+    let height = rows as usize - 3;
 
     let mut generation = 0;
     let mut world = init_world(&width, &height);
